@@ -1306,7 +1306,7 @@ else:
     st.success("Proceed to Part 9")
 
 # ==========================================================
-# ✈️ PART 9: GEOMETRY + DRAG + PERFORMANCE
+# ✈️ PART 9: GEOMETRY + DRAG + PERFORMANCE (FIXED)
 # ==========================================================
 
 st.header("🛩️ Part 9: Aircraft Geometry & Performance Analysis")
@@ -1322,15 +1322,10 @@ Convert design parameters into:
 ---
 
 ### Key Equations:
-
-\[
-S = \frac{W}{W/S}
-\]
-
-\[
-C_D = C_{D0} + k C_L^2
-\]
 """)
+
+st.latex(r"S = \frac{W}{W/S}")
+st.latex(r"C_D = C_{D0} + k C_L^2")
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1339,10 +1334,8 @@ rho = 1.225
 g = 9.81
 
 # ==========================================================
-# SECTION 1: WING SIZING
+# CHECK REQUIRED DATA
 # ==========================================================
-st.subheader("📐 1. Wing Sizing")
-
 if "MTOW" not in st.session_state or "WS_opt" not in st.session_state:
     st.warning("Run Part 7 and Part 8 first")
     st.stop()
@@ -1350,8 +1343,12 @@ if "MTOW" not in st.session_state or "WS_opt" not in st.session_state:
 W = st.session_state["MTOW"] * g
 WS = st.session_state["WS_opt"]
 
-S = W / WS
+# ==========================================================
+# SECTION 1: WING SIZING
+# ==========================================================
+st.subheader("📐 1. Wing Sizing")
 
+S = W / WS
 st.write(f"Wing Area S = {S:.2f} m²")
 
 # ==========================================================
@@ -1359,8 +1356,8 @@ st.write(f"Wing Area S = {S:.2f} m²")
 # ==========================================================
 st.subheader("🛩️ 2. Wing Geometry")
 
-AR = st.slider("Aspect Ratio", 6.0, 14.0, 9.0)
-taper = st.slider("Taper Ratio", 0.2, 1.0, 0.5)
+AR = st.slider("Aspect Ratio", 6.0, 14.0, 9.0, key="p9_AR")
+taper = st.slider("Taper Ratio", 0.2, 1.0, 0.5, key="p9_taper")
 
 b = np.sqrt(AR * S)
 
@@ -1379,19 +1376,17 @@ st.write(f"Mean Aerodynamic Chord = {MAC:.2f} m")
 # ==========================================================
 st.subheader("📊 3. Drag Polar")
 
-CD0 = st.slider("CD0", 0.01, 0.05, 0.02)
-k = st.slider("k", 0.02, 0.1, 0.045)
+CD0 = st.slider("CD0 (Parasite Drag)", 0.01, 0.05, 0.02, key="p9_CD0")
+k = st.slider("Induced Drag Factor k", 0.02, 0.1, 0.045, key="p9_k")
 
 CL_range = np.linspace(0.1, 1.5, 100)
 CD_range = CD0 + k * CL_range**2
 
 fig1, ax1 = plt.subplots()
 ax1.plot(CL_range, CD_range)
-
-ax1.set_xlabel("CL")
-ax1.set_ylabel("CD")
+ax1.set_xlabel("Lift Coefficient (CL)")
+ax1.set_ylabel("Drag Coefficient (CD)")
 ax1.set_title("Drag Polar")
-
 st.pyplot(fig1)
 
 # ==========================================================
@@ -1404,17 +1399,22 @@ Drag = []
 
 for V in V_range:
     q = 0.5 * rho * V**2
+    
+    if q == 0:
+        Drag.append(0)
+        continue
+        
     CL = W / (q * S)
     CD = CD0 + k * CL**2
     Drag.append(q * S * CD)
 
+Drag = np.array(Drag)
+
 fig2, ax2 = plt.subplots()
 ax2.plot(V_range, Drag)
-
 ax2.set_xlabel("Velocity (m/s)")
 ax2.set_ylabel("Drag (N)")
 ax2.set_title("Drag vs Velocity")
-
 st.pyplot(fig2)
 
 # ==========================================================
@@ -1422,19 +1422,17 @@ st.pyplot(fig2)
 # ==========================================================
 st.subheader("⚡ 5. Power Required")
 
-Power = np.array(Drag) * V_range
+Power = Drag * V_range
 
 fig3, ax3 = plt.subplots()
 ax3.plot(V_range, Power)
-
 ax3.set_xlabel("Velocity (m/s)")
 ax3.set_ylabel("Power (W)")
 ax3.set_title("Power Required")
-
 st.pyplot(fig3)
 
 # ==========================================================
-# SECTION 6: MINIMUM DRAG & MAX L/D
+# SECTION 6: MAXIMUM L/D
 # ==========================================================
 st.subheader("🎯 6. Maximum Aerodynamic Efficiency")
 
@@ -1442,9 +1440,14 @@ LD_curve = []
 
 for CL in CL_range:
     CD = CD0 + k * CL**2
-    LD_curve.append(CL / CD)
+    if CD != 0:
+        LD_curve.append(CL / CD)
+    else:
+        LD_curve.append(0)
 
-LD_max = max(LD_curve)
+LD_curve = np.array(LD_curve)
+
+LD_max = np.max(LD_curve)
 CL_opt = CL_range[np.argmax(LD_curve)]
 
 st.write(f"Maximum L/D = {LD_max:.2f}")
@@ -1456,15 +1459,15 @@ st.write(f"Optimal CL = {CL_opt:.2f}")
 st.subheader("🧠 Interpretation")
 
 st.info("""
-👉 Larger wing area reduces wing loading  
-👉 Higher aspect ratio reduces induced drag  
-👉 Drag polar defines aerodynamic performance  
-👉 Minimum drag occurs at optimal CL  
+👉 Increasing Aspect Ratio reduces induced drag  
+👉 Higher taper improves aerodynamic efficiency  
+👉 Drag polar defines performance envelope  
+👉 Minimum drag occurs near optimal CL  
 
 ---
 
 ### Key Insight:
-Aircraft geometry directly affects performance
+Geometry directly controls aircraft efficiency and performance
 """)
 
 # ==========================================================
@@ -1479,10 +1482,10 @@ st.session_state["LD_max"] = LD_max
 # ==========================================================
 st.subheader("✅ Ready to Proceed")
 
-ready9 = st.checkbox("I understand geometry and performance relationships")
+ready9 = st.checkbox("I understand geometry-performance relationship", key="p9_ready")
 
 if not ready9:
-    st.warning("Study geometry-performance link before proceeding")
+    st.warning("Please review before proceeding")
     st.stop()
 else:
     st.success("Proceed to Part 10")
