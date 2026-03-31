@@ -9,15 +9,14 @@ import matplotlib.pyplot as plt
 st.set_page_config(layout="wide")
 
 # ==========================================================
-# GLOBAL GRAPH CONTROL SYSTEM
+# GLOBAL GRAPH CONTROL SYSTEM (SMALL SIZE)
 # ==========================================================
-DEFAULT_FIG_SIZE = (5, 3)
+DEFAULT_FIG_SIZE = (4, 2.5)   # 🔥 Smaller graphs
 
-# Global matplotlib settings (backup control)
 plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
 plt.rcParams["figure.dpi"] = 100
 
-# Custom function (STRICT control for all plots)
+# Force all plots to follow this size
 def create_figure():
     fig, ax = plt.subplots()
     fig.set_size_inches(DEFAULT_FIG_SIZE[0], DEFAULT_FIG_SIZE[1], forward=True)
