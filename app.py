@@ -11,7 +11,7 @@ st.set_page_config(layout="wide")
 # ==========================================================
 # GLOBAL GRAPH CONTROL SYSTEM (SMALL SIZE)
 # ==========================================================
-DEFAULT_FIG_SIZE = (4, 2.5)   # 🔥 Smaller graphs
+DEFAULT_FIG_SIZE = (3.5, 2)   # 🔥 Smaller graphs
 
 plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
 plt.rcParams["figure.dpi"] = 100
