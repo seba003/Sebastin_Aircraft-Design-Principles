@@ -9,14 +9,24 @@ import matplotlib.pyplot as plt
 st.set_page_config(layout="wide")
 
 # ==========================================================
-# GLOBAL GRAPH CONTROL SYSTEM (SMALL SIZE)
+# GLOBAL GRAPH CONTROL SYSTEM (COMPACT + CLEAN)
 # ==========================================================
-DEFAULT_FIG_SIZE = (3.5, 2)   # 🔥 Smaller graphs
+DEFAULT_FIG_SIZE = (3.5, 2)
 
 plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
-plt.rcParams["figure.dpi"] = 50
+plt.rcParams["figure.dpi"] = 100
 
-# Force all plots to follow this size
+# 🔥 TEXT SIZE CONTROL (NEW)
+plt.rcParams["axes.titlesize"] = 10     # Title
+plt.rcParams["axes.labelsize"] = 9      # X & Y labels
+plt.rcParams["xtick.labelsize"] = 8     # X ticks
+plt.rcParams["ytick.labelsize"] = 8     # Y ticks
+plt.rcParams["legend.fontsize"] = 8     # Legend
+plt.rcParams["font.size"] = 9           # General font
+
+# ==========================================================
+# STRICT FIGURE CONTROL
+# ==========================================================
 def create_figure():
     fig, ax = plt.subplots()
     fig.set_size_inches(DEFAULT_FIG_SIZE[0], DEFAULT_FIG_SIZE[1], forward=True)
@@ -114,11 +124,11 @@ The course is organized into the following modules:
 
 1. Course Information  
 2. Fundamentals & Flight Mechanics  
-3. Pre-requisite Quiz (50 Questions)  
+3. Pre-requisite Quiz (20 Questions)  
 4. Interactive Flight Mechanics Lab  
 5. Aircraft Classification + Quiz  
 6. Aircraft Data Upload & Validation  
-7. Weight Estimation (Microscopic)  
+7. Weight Estimation   
 8. Constraint Analysis  
 9. Geometry & Performance  
 10. Optimization & Final Design  
