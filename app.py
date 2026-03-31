@@ -535,7 +535,7 @@ st.subheader("✅ Ready to Proceed")
 ready3 = st.checkbox("I have completed the quiz and ready for next module")
 
 if score < 35:
-    st.warning("You must score at least 35 to proceed")
+    st.warning("You must score at least 15 to proceed")
     st.stop()
 
 if not ready3:
