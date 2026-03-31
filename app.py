@@ -362,9 +362,9 @@ Evaluate your understanding of aircraft fundamentals before proceeding.
 
 ---
 
-✔ Total Questions: 50  
+✔ Total Questions: 20  
 ✔ Each Question = 1 Mark  
-✔ Minimum Pass: 35/50  
+✔ Minimum Pass: 15/20  
 
 ---
 """)
