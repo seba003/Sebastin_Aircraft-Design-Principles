@@ -17,12 +17,12 @@ plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
 plt.rcParams["figure.dpi"] = 100
 
 # 🔥 TEXT SIZE CONTROL (NEW)
-plt.rcParams["axes.titlesize"] = 10     # Title
-plt.rcParams["axes.labelsize"] = 9      # X & Y labels
-plt.rcParams["xtick.labelsize"] = 8     # X ticks
-plt.rcParams["ytick.labelsize"] = 8     # Y ticks
-plt.rcParams["legend.fontsize"] = 8     # Legend
-plt.rcParams["font.size"] = 9           # General font
+plt.rcParams["axes.titlesize"] = 6     # Title
+plt.rcParams["axes.labelsize"] = 5      # X & Y labels
+plt.rcParams["xtick.labelsize"] = 4     # X ticks
+plt.rcParams["ytick.labelsize"] = 4     # Y ticks
+plt.rcParams["legend.fontsize"] = 4     # Legend
+plt.rcParams["font.size"] = 5           # General font
 
 # ==========================================================
 # STRICT FIGURE CONTROL
