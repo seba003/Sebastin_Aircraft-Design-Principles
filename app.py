@@ -177,11 +177,10 @@ An aircraft in flight is subjected to four primary forces:
 
 ### Equilibrium Condition (Level Flight):
 
-\[
-L = W
-\quad ; \quad
-T = D
-\]
+st.markdown(r"""
+$$
+L = W \quad ; \quad T = D
+$$
 """)
 
 # Forces Diagram
