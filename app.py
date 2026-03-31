@@ -2,7 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
+plt.rcParams["figure.figsize"] = (5, 3)   # Width, Height
+plt.rcParams["figure.dpi"] = 100          # Clarity
 st.set_page_config(layout="wide")
 # ==========================================================
 # ✈️ PART 1: COURSE INFORMATION MODULE
