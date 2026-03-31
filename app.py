@@ -1,3 +1,9 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+st.set_page_config(layout="wide")
 # ==========================================================
 # ✈️ PART 1: COURSE INFORMATION MODULE
 # ==========================================================
