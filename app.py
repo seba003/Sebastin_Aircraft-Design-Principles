@@ -530,19 +530,29 @@ Aircraft design requires **deep conceptual clarity**
 # ==========================================================
 # FINAL CHECK
 # ==========================================================
+# ==========================================================
+# FINAL CHECK (FIXED)
+# ==========================================================
+
 st.subheader("✅ Ready to Proceed")
 
-ready3 = st.checkbox("I have completed the quiz and ready for next module")
+# ✅ Correct pass criteria
+PASS_MARK = 15
 
-if score < 35:
-    st.warning("You must score at least 15 to proceed")
+ready3 = st.checkbox("I have completed the quiz and ready for next module", key="quiz_ready")
+
+# First check score
+if score < PASS_MARK:
+    st.warning(f"You must score at least {PASS_MARK}/20 to proceed")
     st.stop()
 
+# Then check readiness
 if not ready3:
-    st.warning("Confirm readiness to continue")
+    st.warning("Please confirm readiness to continue")
     st.stop()
-else:
-    st.success("Proceed to Part 4")
+
+# If both satisfied
+st.success("Proceed to Part 4")
 
 # ==========================================================
 # ✈️ PART 4: INTERACTIVE FLIGHT MECHANICS LAB (FIXED)
