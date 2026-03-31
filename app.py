@@ -1491,23 +1491,21 @@ else:
     st.success("Proceed to Part 10")
 
 # ==========================================================
-# ✈️ PART 10: OPTIMIZATION & FINAL DESIGN
+# ✈️ PART 10: OPTIMIZATION & FINAL DESIGN (FIXED)
 # ==========================================================
 
 st.header("🎯 Part 10: Optimization & Final Aircraft Design")
 
 st.markdown("""
 ### 🎯 Objective:
-Find the **optimal aircraft design** based on:
-
-- Aerodynamic efficiency  
-- Fuel consumption  
-- Thrust requirement  
+Find the optimal aircraft design using multi-objective optimization
 
 ---
 
-### Multi-objective Optimization:
-Balancing performance, efficiency, and feasibility
+Balancing:
+- Drag (Performance)
+- L/D (Efficiency)
+- Fuel consumption
 """)
 
 import numpy as np
@@ -1533,8 +1531,8 @@ st.subheader("📊 Design Space Exploration")
 
 V_range = np.linspace(50, 300, 100)
 
-CD0 = st.slider("CD0", 0.01, 0.05, 0.02)
-k = st.slider("k", 0.02, 0.1, 0.045)
+CD0 = st.slider("CD0 (Parasite Drag)", 0.01, 0.05, 0.02, key="p10_CD0")
+k = st.slider("Induced Drag Factor k", 0.02, 0.1, 0.045, key="p10_k")
 
 Drag = []
 LD_list = []
@@ -1542,13 +1540,31 @@ Fuel_index = []
 
 for V in V_range:
     q = 0.5 * rho * V**2
+
+    if q == 0:
+        Drag.append(0)
+        LD_list.append(0)
+        Fuel_index.append(0)
+        continue
+
     CL = W / (q * S)
     CD = CD0 + k * CL**2
+
     D = q * S * CD
 
     Drag.append(D)
-    LD_list.append(CL/CD)
-    Fuel_index.append(1/(CL/CD))  # inverse efficiency
+
+    if CD != 0:
+        LD_val = CL / CD
+    else:
+        LD_val = 0
+
+    LD_list.append(LD_val)
+
+    if LD_val != 0:
+        Fuel_index.append(1 / LD_val)
+    else:
+        Fuel_index.append(0)
 
 Drag = np.array(Drag)
 LD_list = np.array(LD_list)
@@ -1559,11 +1575,10 @@ Fuel_index = np.array(Fuel_index)
 # ==========================================================
 st.subheader("🎛️ Optimization Priorities")
 
-w_drag = st.slider("Importance: Low Drag", 0.0, 1.0, 0.3)
-w_eff = st.slider("Importance: High Efficiency (L/D)", 0.0, 1.0, 0.4)
-w_fuel = st.slider("Importance: Fuel Saving", 0.0, 1.0, 0.3)
+w_drag = st.slider("Importance: Low Drag", 0.0, 1.0, 0.3, key="p10_w_drag")
+w_eff = st.slider("Importance: High Efficiency (L/D)", 0.0, 1.0, 0.4, key="p10_w_eff")
+w_fuel = st.slider("Importance: Fuel Saving", 0.0, 1.0, 0.3, key="p10_w_fuel")
 
-# Normalize weights
 total = w_drag + w_eff + w_fuel
 
 if total == 0:
@@ -1577,10 +1592,17 @@ w_fuel /= total
 # ==========================================================
 # SECTION 3: OBJECTIVE FUNCTION
 # ==========================================================
+st.subheader("⚙️ Optimization Model")
+
+# Normalize values safely
+Drag_norm = Drag / np.max(Drag) if np.max(Drag) != 0 else Drag
+LD_norm = LD_list / np.max(LD_list) if np.max(LD_list) != 0 else LD_list
+Fuel_norm = Fuel_index / np.max(Fuel_index) if np.max(Fuel_index) != 0 else Fuel_index
+
 score = (
-    w_drag * (Drag / max(Drag)) +
-    w_eff * (1 - (LD_list / max(LD_list))) +
-    w_fuel * (Fuel_index / max(Fuel_index))
+    w_drag * Drag_norm +
+    w_eff * (1 - LD_norm) +
+    w_fuel * Fuel_norm
 )
 
 opt_index = np.argmin(score)
@@ -1603,29 +1625,29 @@ st.write(f"L/D at optimum = {LD_opt:.2f}")
 # ==========================================================
 st.subheader("📈 Performance Comparison")
 
-fig, ax = plt.subplots()
+fig1, ax1 = plt.subplots()
 
-ax.plot(V_range, Drag, label="Drag")
-ax.plot(V_range, LD_list * 1000, label="L/D (scaled)")
+ax1.plot(V_range, Drag, label="Drag (N)")
+ax1.plot(V_range, LD_list * 1000, label="L/D (scaled)")
 
-ax.scatter(V_opt, Drag_opt)
+ax1.scatter(V_opt, Drag_opt)
 
-ax.set_xlabel("Velocity (m/s)")
-ax.set_ylabel("Performance Metrics")
-ax.set_title("Optimization Analysis")
+ax1.set_xlabel("Velocity (m/s)")
+ax1.set_ylabel("Performance Metrics")
+ax1.set_title("Optimization Analysis")
+ax1.legend()
 
-ax.legend()
-
-st.pyplot(fig)
+st.pyplot(fig1)
 
 # ==========================================================
-# TRADE-OFF VISUALIZATION
+# TRADE-OFF GRAPH
 # ==========================================================
-st.subheader("⚖️ Trade-off Analysis")
+st.subheader("⚖️ Trade-off Curve")
 
 fig2, ax2 = plt.subplots()
 
 ax2.plot(V_range, score)
+ax2.scatter(V_opt, score[opt_index])
 
 ax2.set_xlabel("Velocity (m/s)")
 ax2.set_ylabel("Optimization Score")
@@ -1634,7 +1656,7 @@ ax2.set_title("Trade-off Curve (Lower is Better)")
 st.pyplot(fig2)
 
 # ==========================================================
-# DESIGN VALIDATION
+# VALIDATION
 # ==========================================================
 st.subheader("✔️ Design Validation")
 
@@ -1646,10 +1668,10 @@ else:
     st.error("✖ Lift < Weight (Invalid)")
 
 if Drag_opt > 0:
-    st.success("✔ Drag computed successfully")
+    st.success("✔ Drag computed correctly")
 
 # ==========================================================
-# FINAL DESIGN SUMMARY
+# FINAL SUMMARY
 # ==========================================================
 st.subheader("📋 Final Design Summary")
 
@@ -1658,7 +1680,7 @@ st.write(f"Wing Area = {S:.2f} m²")
 st.write(f"Optimal Velocity = {V_opt:.2f} m/s")
 st.write(f"L/D = {LD_opt:.2f}")
 
-# Save results
+# Save for Part 11
 st.session_state["V_opt"] = V_opt
 st.session_state["LD_opt"] = LD_opt
 
@@ -1668,26 +1690,23 @@ st.session_state["LD_opt"] = LD_opt
 st.subheader("🧠 Interpretation")
 
 st.info("""
-👉 Optimal design is a balance—not a single maximum  
-👉 Higher efficiency reduces fuel consumption  
+👉 Optimal design is a compromise between drag, efficiency, and fuel  
+👉 Higher L/D improves range  
 👉 Lower drag improves performance  
-👉 Trade-offs define final aircraft  
+👉 Trade-offs define real aircraft design  
 
 ---
 
-### Key Insight:
 Aircraft design is a **multi-objective optimization problem**
 """)
 
 # ==========================================================
 # FINAL CHECK
 # ==========================================================
-st.subheader("✅ Ready to Proceed")
-
-ready10 = st.checkbox("I understand optimization and final design selection")
+ready10 = st.checkbox("I understand optimization trade-offs", key="p10_ready")
 
 if not ready10:
-    st.warning("Analyze trade-offs before proceeding")
+    st.warning("Review optimization before proceeding")
     st.stop()
 else:
     st.success("Proceed to Part 11")
