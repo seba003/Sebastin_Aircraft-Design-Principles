@@ -370,109 +370,103 @@ Evaluate your understanding of aircraft fundamentals before proceeding.
 """)
 
 # ==========================================================
-# ✈️ IMPROVED QUESTION BANK (50 QUESTIONS + SHUFFLED)
+# ✈️ QUIZ MODULE (20 QUESTIONS + SHUFFLED + STABLE)
 # ==========================================================
 
 import random
 
+# ==========================================================
+# INITIALIZE QUIZ (ONLY ONCE)
+# ==========================================================
 if "quiz_initialized" not in st.session_state:
 
     question_bank = [
 
-    {"q": "Lift is generated due to?", 
-     "options": ["Pressure difference", "Weight", "Thrust", "Gravity"], 
+    {"q": "Lift is primarily generated due to?",
+     "options": ["Pressure difference", "Weight", "Gravity", "Mass"],
      "answer": "Pressure difference"},
 
-    {"q": "Drag increases with?", 
-     "options": ["Velocity²", "Velocity", "Constant", "None"], 
+    {"q": "Drag increases with?",
+     "options": ["Velocity²", "Velocity", "Mass", "Time"],
      "answer": "Velocity²"},
 
-    {"q": "Wing loading is?", 
-     "options": ["W/S", "T/W", "CL/CD", "None"], 
+    {"q": "Wing loading is defined as?",
+     "options": ["W/S", "T/W", "L/D", "None"],
      "answer": "W/S"},
 
-    {"q": "Mach number is ratio of?", 
-     "options": ["Velocity/speed of sound", "Lift/Drag", "Weight/Area", "None"], 
+    {"q": "Mach number represents?",
+     "options": ["Velocity/speed of sound", "Lift/Drag", "Mass/Area", "None"],
      "answer": "Velocity/speed of sound"},
 
-    {"q": "T/W represents?", 
-     "options": ["Thrust-to-weight ratio", "Power ratio", "Lift ratio", "Drag ratio"], 
-     "answer": "Thrust-to-weight ratio"},
+    {"q": "Lift equation contains which term?",
+     "options": ["Velocity squared", "Mass", "Time", "Force only"],
+     "answer": "Velocity squared"},
 
-    {"q": "Lift equation depends on?", 
-     "options": ["Velocity²", "Velocity", "Mass", "Time"], 
-     "answer": "Velocity²"},
-
-    {"q": "CD0 represents?", 
-     "options": ["Parasite drag", "Lift", "Weight", "Power"], 
+    {"q": "CD0 represents?",
+     "options": ["Parasite drag", "Induced drag", "Lift", "Thrust"],
      "answer": "Parasite drag"},
 
-    {"q": "Induced drag depends on?", 
-     "options": ["CL²", "Velocity", "Mass", "None"], 
+    {"q": "Induced drag is proportional to?",
+     "options": ["CL²", "Velocity", "Mass", "None"],
      "answer": "CL²"},
 
-    {"q": "Level flight condition?", 
-     "options": ["L = W", "T = W", "D = W", "None"], 
-     "answer": "L = W"},
+    {"q": "Level flight requires?",
+     "options": ["Lift = Weight", "Thrust = Weight", "Drag = Weight", "None"],
+     "answer": "Lift = Weight"},
 
-    {"q": "High aspect ratio results in?", 
-     "options": ["Low induced drag", "High drag", "Low lift", "None"], 
+    {"q": "High aspect ratio wings produce?",
+     "options": ["Low induced drag", "High drag", "Low lift", "None"],
      "answer": "Low induced drag"},
 
-    {"q": "Wing area affects?", 
-     "options": ["Lift", "Temperature", "Mass", "Time"], 
-     "answer": "Lift"},
-
-    {"q": "Lift coefficient depends on?", 
-     "options": ["Angle of attack", "Velocity", "Mass", "Density"], 
+    {"q": "Lift coefficient depends on?",
+     "options": ["Angle of attack", "Mass", "Time", "Temperature"],
      "answer": "Angle of attack"},
 
-    {"q": "Drag coefficient depends on?", 
-     "options": ["Shape", "Mass", "Time", "Density"], 
+    {"q": "Drag coefficient depends on?",
+     "options": ["Shape", "Mass", "Time", "Force"],
      "answer": "Shape"},
 
-    {"q": "Stall occurs due to?", 
-     "options": ["High angle of attack", "Low speed", "High drag", "None"], 
+    {"q": "Stall occurs due to?",
+     "options": ["High angle of attack", "Low drag", "High speed", "Low thrust"],
      "answer": "High angle of attack"},
 
-    {"q": "Thrust is required to overcome?", 
-     "options": ["Drag", "Lift", "Weight", "Mass"], 
-     "answer": "Drag"},
-
-    {"q": "Power required equals?", 
-     "options": ["Drag × Velocity", "Lift × Velocity", "Weight × Speed", "None"], 
+    {"q": "Power required is?",
+     "options": ["Drag × Velocity", "Lift × Velocity", "Mass × Speed", "None"],
      "answer": "Drag × Velocity"},
 
-    {"q": "Lift increases with?", 
-     "options": ["Velocity²", "Velocity", "Mass", "Time"], 
-     "answer": "Velocity²"},
-
-    {"q": "Best L/D occurs at?", 
-     "options": ["Optimal CL", "Max CL", "Min CL", "Zero CL"], 
-     "answer": "Optimal CL"},
-
-    {"q": "Load factor is?", 
-     "options": ["L/W", "W/S", "T/W", "None"], 
+    {"q": "Load factor is defined as?",
+     "options": ["L/W", "W/S", "T/W", "None"],
      "answer": "L/W"},
 
-    {"q": "Turn radius depends on?", 
-     "options": ["Velocity & load factor", "Mass", "Time", "Temperature"], 
-     "answer": "Velocity & load factor"},
+    {"q": "Turn radius depends on?",
+     "options": ["Velocity and load factor", "Mass only", "Time", "Density"],
+     "answer": "Velocity and load factor"},
 
-    # ---- Remaining auto-generated logically varied questions ----
+    {"q": "Higher L/D ratio means?",
+     "options": ["Better efficiency", "Higher drag", "Lower lift", "None"],
+     "answer": "Better efficiency"},
+
+    {"q": "Increasing wing area will?",
+     "options": ["Increase lift", "Decrease lift", "No effect", "Reduce thrust"],
+     "answer": "Increase lift"},
+
+    {"q": "Thrust is used to overcome?",
+     "options": ["Drag", "Lift", "Weight", "Mass"],
+     "answer": "Drag"},
+
+    {"q": "Cruise flight condition requires?",
+     "options": ["Thrust = Drag", "Lift > Weight", "Drag > Thrust", "None"],
+     "answer": "Thrust = Drag"},
+
+    {"q": "Best aerodynamic efficiency occurs at?",
+     "options": ["Maximum L/D", "Maximum CL", "Minimum velocity", "None"],
+     "answer": "Maximum L/D"},
     ]
 
-    # Auto-fill to 50 (with slight variation)
-    while len(question_bank) < 50:
-        base = random.choice(question_bank)
-        new_q = base.copy()
-        new_q["q"] = base["q"] + f" (Concept {len(question_bank)+1})"
-        question_bank.append(new_q)
-
-    # Shuffle questions once
+    # Shuffle question order
     random.shuffle(question_bank)
 
-    # Shuffle options inside each question
+    # Shuffle options for each question
     for q in question_bank:
         random.shuffle(q["options"])
 
@@ -480,9 +474,8 @@ if "quiz_initialized" not in st.session_state:
     st.session_state["quiz_initialized"] = True
 
 # ==========================================================
-# QUIZ EXECUTION
+# QUIZ DISPLAY
 # ==========================================================
-
 st.subheader("📝 Answer the following questions:")
 
 score = 0
@@ -492,7 +485,7 @@ for i, q in enumerate(st.session_state["quiz_questions"]):
     answer = st.radio(
         f"Q{i+1}: {q['q']}",
         q["options"],
-        key=f"quiz_q_{i}"
+        key=f"quiz20_q_{i}"
     )
 
     if answer == q["answer"]:
@@ -501,22 +494,20 @@ for i, q in enumerate(st.session_state["quiz_questions"]):
 # ==========================================================
 # RESULTS
 # ==========================================================
-
 st.subheader("📊 Quiz Result")
 
-st.write(f"Your Score: {score} / 50")
+st.write(f"Your Score: {score} / 20")
 
-st.progress(score / 50)
+st.progress(score / 20)
 
 # ==========================================================
 # FEEDBACK
 # ==========================================================
-
-if score >= 40:
-    st.success("🌟 Excellent! Strong conceptual mastery.")
-elif score >= 35:
+if score >= 16:
+    st.success("🌟 Excellent! Strong conceptual understanding.")
+elif score >= 12:
     st.success("✅ Good! Ready for design phase.")
-elif score >= 25:
+elif score >= 8:
     st.warning("⚠️ Moderate understanding. Revise key concepts.")
 else:
     st.error("❌ Weak understanding. Revisit fundamentals.")
@@ -524,7 +515,6 @@ else:
 # ==========================================================
 # INTERPRETATION
 # ==========================================================
-
 st.subheader("🧠 Interpretation")
 
 st.info("""
