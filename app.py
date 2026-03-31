@@ -2,11 +2,26 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 
-plt.rcParams["figure.figsize"] = (5, 3)   # Width, Height
-plt.rcParams["figure.dpi"] = 100          # Clarity
+# ==========================================================
+# PAGE CONFIG
+# ==========================================================
 st.set_page_config(layout="wide")
+
+# ==========================================================
+# GLOBAL GRAPH CONTROL SYSTEM
+# ==========================================================
+DEFAULT_FIG_SIZE = (5, 3)
+
+# Global matplotlib settings (backup control)
+plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
+plt.rcParams["figure.dpi"] = 100
+
+# Custom function (STRICT control for all plots)
+def create_figure():
+    fig, ax = plt.subplots()
+    fig.set_size_inches(DEFAULT_FIG_SIZE[0], DEFAULT_FIG_SIZE[1], forward=True)
+    return fig, ax
 # ==========================================================
 # ✈️ PART 1: COURSE INFORMATION MODULE
 # ==========================================================
