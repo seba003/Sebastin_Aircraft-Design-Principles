@@ -14,7 +14,7 @@ st.set_page_config(layout="wide")
 DEFAULT_FIG_SIZE = (3.5, 2)   # 🔥 Smaller graphs
 
 plt.rcParams["figure.figsize"] = DEFAULT_FIG_SIZE
-plt.rcParams["figure.dpi"] = 100
+plt.rcParams["figure.dpi"] = 50
 
 # Force all plots to follow this size
 def create_figure():
