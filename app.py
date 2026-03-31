@@ -176,14 +176,14 @@ An aircraft in flight is subjected to four primary forces:
 ---
 
 ### Equilibrium Condition (Level Flight):
-
-st.markdown(r"""
-$$
-L = W \quad ; \quad T = D
-$$
 """)
 
+# ✅ Proper LaTeX rendering
+st.latex(r"L = W \quad ; \quad T = D")
+
+# ==========================================================
 # Forces Diagram
+# ==========================================================
 import matplotlib.pyplot as plt
 
 fig1, ax1 = plt.subplots()
