@@ -459,20 +459,11 @@ if not ready3:
 else:
     st.success("Proceed to Part 4")
 
-    # ==========================================================
-# ✈️ PART 4: INTERACTIVE FLIGHT MECHANICS LAB
+# ==========================================================
+# ✈️ PART 4: INTERACTIVE FLIGHT MECHANICS LAB (FIXED)
 # ==========================================================
 
 st.header("🧪 Part 4: Interactive Flight Mechanics Laboratory")
-
-st.markdown("""
-### 🎯 Objective:
-Understand how **changing one parameter affects aircraft performance**
-
----
-
-👉 This is a **cause-effect simulation lab**
-""")
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -480,53 +471,53 @@ import matplotlib.pyplot as plt
 g = 9.81
 
 # ==========================================================
-# INPUT VARIABLES
+# INPUT VARIABLES (WITH UNIQUE KEYS)
 # ==========================================================
 st.subheader("🎛️ Control Panel (Adjust Variables)")
 
 col1, col2, col3 = st.columns(3)
 
-rho = col1.slider("Air Density ρ (kg/m³)", 0.5, 1.5, 1.225)
-V = col2.slider("Velocity V (m/s)", 50, 300, 150)
-S = col3.slider("Wing Area S (m²)", 10.0, 200.0, 50.0)
+rho = col1.slider("Air Density ρ (kg/m³)", 0.5, 1.5, 1.225, key="p4_rho")
+V = col2.slider("Velocity V (m/s)", 50, 300, 150, key="p4_V")
+S = col3.slider("Wing Area S (m²)", 10.0, 200.0, 50.0, key="p4_S")
 
-CL = st.slider("Lift Coefficient CL", 0.1, 1.5, 0.5)
+CL = st.slider("Lift Coefficient CL", 0.1, 1.5, 0.5, key="p4_CL")
 
-CD0 = st.slider("CD₀ (Parasite Drag)", 0.01, 0.05, 0.02)
-k = st.slider("k (Induced Drag Factor)", 0.02, 0.1, 0.045)
+CD0 = st.slider("CD₀ (Parasite Drag)", 0.01, 0.05, 0.02, key="p4_CD0")
+k = st.slider("k (Induced Drag Factor)", 0.02, 0.1, 0.045, key="p4_k")
 
-Weight = st.slider("Aircraft Weight (N)", 10000, 500000, 100000)
+Weight = st.slider("Aircraft Weight (N)", 10000, 500000, 100000, key="p4_W")
 
-n = st.slider("Load Factor (n)", 1.0, 5.0, 2.5)
+n = st.slider("Load Factor (n)", 1.0, 5.0, 2.5, key="p4_n")
 
 # ==========================================================
 # CALCULATIONS
 # ==========================================================
 st.subheader("📐 Real-Time Calculations")
 
-# Lift
 Lift = 0.5 * rho * V**2 * S * CL
 
-# Drag
 CD = CD0 + k * CL**2
 Drag = 0.5 * rho * V**2 * S * CD
 
-# L/D
 LD = Lift / Drag if Drag != 0 else 0
 
 # Stall Speed
 CLmax = 1.5
 Vs = np.sqrt((2 * Weight) / (rho * S * CLmax))
 
-# Turn performance
-turn_rate = (g * np.sqrt(n**2 - 1)) / V
-turn_radius = V**2 / (g * np.sqrt(n**2 - 1))
+# Turn Performance
+if n > 1:
+    turn_rate = (g * np.sqrt(n**2 - 1)) / V
+    turn_radius = V**2 / (g * np.sqrt(n**2 - 1))
+else:
+    turn_rate = 0
+    turn_radius = 0
 
-# Bank angle
-bank_angle = np.degrees(np.arccos(1/n))
+bank_angle = np.degrees(np.arccos(1/n)) if n > 1 else 0
 
 # ==========================================================
-# OUTPUT DISPLAY
+# OUTPUTS
 # ==========================================================
 st.subheader("📊 Output Results")
 
@@ -540,104 +531,73 @@ st.write(f"Turn Radius = {turn_radius:.2f} m")
 st.write(f"Bank Angle = {bank_angle:.2f}°")
 
 # ==========================================================
-# GRAPH 1: LIFT vs VELOCITY
+# GRAPHS
 # ==========================================================
-st.subheader("📈 Lift vs Velocity")
 
 V_range = np.linspace(50, 300, 100)
-Lift_curve = 0.5 * rho * V_range**2 * S * CL
 
+# Lift vs Velocity
 fig1, ax1 = plt.subplots()
+Lift_curve = 0.5 * rho * V_range**2 * S * CL
 ax1.plot(V_range, Lift_curve)
-
 ax1.set_xlabel("Velocity (m/s)")
 ax1.set_ylabel("Lift (N)")
 ax1.set_title("Lift vs Velocity")
-
 st.pyplot(fig1)
 
-# ==========================================================
-# GRAPH 2: DRAG vs VELOCITY
-# ==========================================================
-st.subheader("📉 Drag vs Velocity")
-
-Drag_curve = []
-
-for v in V_range:
-    CD_temp = CD0 + k * CL**2
-    Drag_curve.append(0.5 * rho * v**2 * S * CD_temp)
-
+# Drag vs Velocity
 fig2, ax2 = plt.subplots()
+Drag_curve = 0.5 * rho * V_range**2 * S * CD
 ax2.plot(V_range, Drag_curve)
-
 ax2.set_xlabel("Velocity (m/s)")
 ax2.set_ylabel("Drag (N)")
 ax2.set_title("Drag vs Velocity")
-
 st.pyplot(fig2)
 
-# ==========================================================
-# GRAPH 3: L/D vs CL
-# ==========================================================
-st.subheader("📊 L/D vs CL")
-
+# L/D vs CL
+fig3, ax3 = plt.subplots()
 CL_range = np.linspace(0.1, 1.5, 100)
 CD_range = CD0 + k * CL_range**2
 LD_curve = CL_range / CD_range
-
-fig3, ax3 = plt.subplots()
 ax3.plot(CL_range, LD_curve)
-
-ax3.set_xlabel("Lift Coefficient (CL)")
-ax3.set_ylabel("L/D Ratio")
-ax3.set_title("Aerodynamic Efficiency")
-
+ax3.set_xlabel("CL")
+ax3.set_ylabel("L/D")
+ax3.set_title("L/D vs CL")
 st.pyplot(fig3)
 
-# ==========================================================
-# GRAPH 4: TURN PERFORMANCE
-# ==========================================================
-st.subheader("🔄 Turn Performance")
-
+# Turn Radius
+fig4, ax4 = plt.subplots()
 n_range = np.linspace(1.1, 5, 100)
 turn_radius_curve = V**2 / (g * np.sqrt(n_range**2 - 1))
-
-fig4, ax4 = plt.subplots()
 ax4.plot(n_range, turn_radius_curve)
-
 ax4.set_xlabel("Load Factor (n)")
 ax4.set_ylabel("Turn Radius (m)")
 ax4.set_title("Turn Radius vs Load Factor")
-
 st.pyplot(fig4)
 
 # ==========================================================
 # INTERPRETATION
 # ==========================================================
-st.subheader("🧠 Interpretation & Learning")
+st.subheader("🧠 Interpretation")
 
 st.info("""
-👉 Increasing velocity increases both Lift and Drag significantly  
-👉 Increasing CL increases Lift but also increases Drag  
-👉 Higher L/D → more efficient aircraft  
-👉 Higher load factor → tighter turn but higher stress  
+👉 Increasing velocity increases Lift and Drag  
+👉 Higher CL increases lift but also drag  
+👉 Higher load factor → tighter turn  
 👉 Stall speed depends on weight and wing area  
 
 ---
 
-### 💡 Key Insight:
-Aircraft design is about balancing **performance vs efficiency vs safety**
+Aircraft performance depends on **interconnected variables**
 """)
 
 # ==========================================================
 # FINAL CHECK
 # ==========================================================
-st.subheader("✅ Ready to Proceed")
-
-ready4 = st.checkbox("I understand how variables affect performance")
+ready4 = st.checkbox("I understand variable interaction", key="p4_ready")
 
 if not ready4:
-    st.warning("Interact with variables and understand effects before proceeding")
+    st.warning("Interact and learn before proceeding")
     st.stop()
 else:
     st.success("Proceed to Part 5")
