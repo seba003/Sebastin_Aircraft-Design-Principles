@@ -792,36 +792,111 @@ if st.button("Evaluate Classification"):
 # ==========================================================
 # SECTION 3: 30 MCQ QUIZ
 # ==========================================================
-st.subheader("📝 3. Aircraft Classification Quiz (30 Questions)")
+# ==========================================================
+# ✈️ AIRCRAFT CLASSIFICATION QUIZ (15 QUESTIONS)
+# ==========================================================
+
+import random
+
+st.subheader("📝 3. Aircraft Classification Quiz (15 Questions)")
 
 st.markdown("""
-✔ Total Questions: 30  
-✔ Passing Score: 20  
+✔ Total Questions: 15  
+✔ Passing Score: 10  
 """)
 
-questions = [
-("Passenger aircraft are typically?", ["Subsonic", "Supersonic", "Hypersonic", "None"], "Subsonic"),
-("Fighter aircraft operate in?", ["Supersonic", "Subsonic", "Low speed", "None"], "Supersonic"),
-("UAV stands for?", ["Unmanned Aerial Vehicle", "Ultra Air Vehicle", "Unit Air Vehicle", "None"], "Unmanned Aerial Vehicle"),
-("Mach number depends on?", ["Speed of sound", "Weight", "Area", "Drag"], "Speed of sound"),
-("Flying wing has?", ["No fuselage", "Large fuselage", "Two wings", "None"], "No fuselage"),
-("Cargo aircraft are optimized for?", ["Payload", "Speed", "Drag", "Lift"], "Payload"),
-("Transonic range is?", ["0.8–1.2", "1–2", "0–0.5", "2–3"], "0.8–1.2"),
-("Canard configuration has?", ["Forward tail", "Rear tail", "No tail", "None"], "Forward tail"),
-("Hypersonic means?", [">5 Mach", "<1 Mach", "2 Mach", "None"], ">5 Mach"),
-("Monoplane means?", ["Single wing", "Two wings", "No wing", "None"], "Single wing"),
-]
+# ==========================================================
+# INITIALIZE QUIZ (RUN ONLY ONCE)
+# ==========================================================
+if "class_quiz_init" not in st.session_state:
 
-# Extend to 30
-while len(questions) < 30:
-    questions.append(questions[len(questions)%10])
+    question_bank = [
 
+    {"q": "Passenger aircraft are typically?", 
+     "options": ["Subsonic", "Supersonic", "Hypersonic", "None"], 
+     "answer": "Subsonic"},
+
+    {"q": "Fighter aircraft generally operate in?", 
+     "options": ["Supersonic", "Subsonic", "Low speed", "None"], 
+     "answer": "Supersonic"},
+
+    {"q": "UAV stands for?", 
+     "options": ["Unmanned Aerial Vehicle", "Ultra Air Vehicle", "Unit Air Vehicle", "None"], 
+     "answer": "Unmanned Aerial Vehicle"},
+
+    {"q": "Mach number depends on?", 
+     "options": ["Speed of sound", "Weight", "Area", "Drag"], 
+     "answer": "Speed of sound"},
+
+    {"q": "Flying wing configuration has?", 
+     "options": ["No fuselage", "Large fuselage", "Two wings", "None"], 
+     "answer": "No fuselage"},
+
+    {"q": "Cargo aircraft are optimized for?", 
+     "options": ["Payload", "Speed", "Drag", "Lift"], 
+     "answer": "Payload"},
+
+    {"q": "Transonic speed range is?", 
+     "options": ["0.8–1.2", "1–2", "0–0.5", "2–3"], 
+     "answer": "0.8–1.2"},
+
+    {"q": "Canard configuration includes?", 
+     "options": ["Forward tail", "Rear tail", "No tail", "None"], 
+     "answer": "Forward tail"},
+
+    {"q": "Hypersonic regime starts at?", 
+     "options": [">5 Mach", "<1 Mach", "2 Mach", "None"], 
+     "answer": ">5 Mach"},
+
+    {"q": "Monoplane means?", 
+     "options": ["Single wing", "Two wings", "No wing", "None"], 
+     "answer": "Single wing"},
+
+    {"q": "Supersonic aircraft typically have?", 
+     "options": ["Swept wings", "Straight wings", "No wings", "Flexible wings"], 
+     "answer": "Swept wings"},
+
+    {"q": "High-wing aircraft provide?", 
+     "options": ["Better stability", "Higher drag", "Less lift", "None"], 
+     "answer": "Better stability"},
+
+    {"q": "Low-wing aircraft are common in?", 
+     "options": ["Fighters", "Gliders", "Helicopters", "None"], 
+     "answer": "Fighters"},
+
+    {"q": "Blended Wing Body design improves?", 
+     "options": ["Efficiency", "Weight only", "Speed only", "None"], 
+     "answer": "Efficiency"},
+
+    {"q": "Aircraft classification depends mainly on?", 
+     "options": ["Mission", "Color", "Pilot", "Weather"], 
+     "answer": "Mission"},
+    ]
+
+    # Shuffle questions
+    random.shuffle(question_bank)
+
+    # Shuffle options inside each question
+    for q in question_bank:
+        random.shuffle(q["options"])
+
+    st.session_state["class_quiz"] = question_bank
+    st.session_state["class_quiz_init"] = True
+
+# ==========================================================
+# QUIZ EXECUTION
+# ==========================================================
 score5 = 0
 
-for i, (q, options, correct) in enumerate(questions):
-    ans = st.radio(f"Q{i+1}: {q}", options, key=f"class{i}")
+for i, q in enumerate(st.session_state["class_quiz"]):
 
-    if ans == correct:
+    ans = st.radio(
+        f"Q{i+1}: {q['q']}",
+        q["options"],
+        key=f"class_q_{i}"
+    )
+
+    if ans == q["answer"]:
         score5 += 1
 
 # ==========================================================
@@ -829,13 +904,18 @@ for i, (q, options, correct) in enumerate(questions):
 # ==========================================================
 st.subheader("📊 Quiz Result")
 
-st.write(f"Score: {score5}/30")
-st.progress(score5/30)
+st.write(f"Score: {score5}/15")
+st.progress(score5/15)
 
-if score5 >= 20:
-    st.success("✔ Passed – Good understanding of aircraft classification")
-elif score5 >= 15:
-    st.warning("⚠ Moderate – Improve classification clarity")
+# ==========================================================
+# FEEDBACK
+# ==========================================================
+if score5 >= 12:
+    st.success("🌟 Excellent understanding of aircraft classification")
+elif score5 >= 10:
+    st.success("✅ Passed – Good understanding")
+elif score5 >= 7:
+    st.warning("⚠ Moderate – Improve clarity")
 else:
     st.error("❌ Weak – Revise classification concepts")
 
@@ -856,21 +936,26 @@ Different aircraft require different design philosophies
 """)
 
 # ==========================================================
-# FINAL CHECK
+# FINAL CHECK (FIXED)
 # ==========================================================
 st.subheader("✅ Ready to Proceed")
 
-ready5 = st.checkbox("I understand aircraft classification and ready for design stage")
+PASS_MARK = 10
 
-if score5 < 20:
-    st.warning("Minimum score of 20 required to proceed")
+ready5 = st.checkbox(
+    "I understand aircraft classification and ready for design stage",
+    key="class_ready"
+)
+
+if score5 < PASS_MARK:
+    st.warning(f"Minimum score of {PASS_MARK}/15 required to proceed")
     st.stop()
 
 if not ready5:
     st.warning("Confirm readiness to proceed")
     st.stop()
-else:
-    st.success("Proceed to Part 6")
+
+st.success("Proceed to Part 6")
 
 # ==========================================================
 # ✈️ PART 6: AIRCRAFT DATA INPUT & VALIDATION
